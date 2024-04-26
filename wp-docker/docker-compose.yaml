@@ -1,0 +1,31 @@
+version: '3.3'
+
+services:
+  wordpress:
+    image: wordpress:latest
+    ports:
+      - "8000:80"
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: dbuser
+      WORDPRESS_DB_PASSWORD: dbpass
+      WORDPRESS_DB_NAME: wordpress
+    restart: always
+
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: dbpass
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: dbpass
+    restart: always
+
+volumes:
+  wordpress_data:
+  db_data:

@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  tensorflow:
+    build: ./tensorflow
+    volumes:
+      - ./tensorflow:/app
+      - ./data:/app/data
+      - tensorflow-logs:/app/logs
+    ports:
+      - "6006:6006"
+    # Brak 'command', skrypt będzie uruchamiany ręcznie lub przez skonfigurowany entrypoint w Dockerfile.
+
+  keras:
+    build: ./keras
+    volumes:
+      - ./keras:/app
+      - ./data:/app/data
+    ports:
+      - "8888:8888"
+    command: jupyter notebook --ip=0.0.0.0 --no-browser --allow-root --NotebookApp.token='' --NotebookApp.password=''
+
+  tensorboard:
+    image: tensorflow/tensorflow:latest  # Użyj odpowiedniej wersji
+    volumes:
+      - tensorflow-logs:/app/logs  # Używa tego samego wolumenu co serwis tensorflow
+    ports:
+      - "6007:6006"
+    command: tensorboard --logdir=/app/logs --bind_all
+
+volumes:
+  tensorflow-logs:
+  # 'keras-logs' nie jest zdefiniowany, ponieważ nie ma wskazówek, że jest potrzebny.
+  # data-volume nie jest używany, dane są mapowane bezpośrednio z hosta.
